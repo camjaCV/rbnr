@@ -10,7 +10,7 @@ import com.camjacv.rbnr.adapter.Settings;
 
 public interface HIService {
 	List<String> getInputImages();
-	HIResult getBinarizedImage(Settings settings);
+	HIResult getBinarizedImage(Settings settings, String inputImagePath);
 	String storeUploadedImage(MultipartFile uploadedFile) throws IllegalStateException, IOException;
 	boolean trackUser(String ipAddress) throws IOException, ParseException;
 }

@@ -34,7 +34,7 @@ public class HIController
 		return new ResponseEntity<List<String>>(imagePaths, HttpStatus.OK);
 	}
 	@RequestMapping(value="binarize", method=RequestMethod.POST)
-	public ResponseEntity<HIResult> getBinarizedImage(@RequestBody String imagePath, @RequestParam boolean doOcr, @RequestParam boolean doRegionImages, @RequestParam boolean doAutoSegment, HttpServletRequest request)
+	public ResponseEntity<HIResult> getBinarizedImage(@RequestBody String imagePath, HttpServletRequest request)
 	{
 		boolean grantAccess = false;
 		try {
@@ -46,15 +46,14 @@ public class HIController
 		{
 			return new ResponseEntity<HIResult>(HttpStatus.TOO_MANY_REQUESTS);
 		}
-		RbnrAdapter testCall = new RbnrAdapter();
+		RbnrAdapter rbnrAdapter = new RbnrAdapter();
 		
 		//Set up the settings
 		Settings settings = new Settings();
-		settings.setImageFilePath(imagePath);
-		settings.setDoOcr(doOcr);
-		settings.setDoRegionImages(doRegionImages);
-		settings.setDoAutoSegment(doAutoSegment);
-		HIResult hiResult = hiService.getBinarizedImage(settings);
+		settings.setNumThreadsToUse(1);
+		settings.setTextDarkFlag(1);
+		settings.setConfidenceThreshold(15);
+		HIResult hiResult = hiService.getBinarizedImage(settings, imagePath);
 		return new ResponseEntity<HIResult>(hiResult, HttpStatus.OK);
 	}
 //	@RequestMapping(value="transcribe", method=RequestMethod.POST)

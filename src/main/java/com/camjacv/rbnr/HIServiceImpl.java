@@ -10,13 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,17 +54,17 @@ public class HIServiceImpl implements HIService {
 	}
 	
 	@Override
-	public HIResult getBinarizedImage(Settings settings, String[] imagePaths) {
-		String imagePath = settings.getImageFilePath();
+	public HIResult getBinarizedImage(Settings settings, String inputImagePath) {
 		String relativePathToInputImages = "data/input-images";
 		String fullPathToInputImages = PATH_TO_WEBAPP + "/" + relativePathToInputImages;
 		String relativePathToOutputImages = "data/output-images";
 		String fullPathToOutputImages = PATH_TO_WEBAPP + "/" + relativePathToOutputImages;
-		String pathToExecutable = System.getenv("HeadstoneIndexerPath");
+		//TODO add more intelligence to the process (i.e. mlp's)
+//		String pathToExecutable = System.getenv("HeadstoneIndexerPath");
 		
 		logger.info("image storage path: " + fullPathToInputImages);
 		
-		File image = new File(fullPathToInputImages + "/" + imagePath);
+		File image = new File(fullPathToInputImages + "/" + inputImagePath);
 		if (!image.exists() || !image.isFile())
 		{
 			throw new IllegalArgumentException("The image specified does not exist or is not a file (" + image.getAbsolutePath() + ")");
@@ -80,52 +74,17 @@ public class HIServiceImpl implements HIService {
 		File destinationDir = new File(fullPathToOutputImages);
 		destinationDir.mkdirs();
 		
-		settings.setImageFilePath(image.getAbsolutePath());
-		settings.setResultImageFilePath(destinationDir.getAbsolutePath());
 		HIResult result = new HIResult();
-		result.setOriginalPath(relativePathToInputImages + "/" + imagePath);
+		result.setOriginalPath(relativePathToInputImages + "/" + inputImagePath);
 		
 		RbnrAdapter adapter = new RbnrAdapter();
 		Date timerStart = new Date();
-		String ocr = adapter.indexHeadstone(settings);
+		String[] imagesToProcess = {fullImagePath};
+		Map<String, String[]> ocrResults = adapter.recognizeRbns(settings, imagesToProcess);
 		Date timerEnd = new Date();
 		result.setDuration(timerEnd.getTime() - timerStart.getTime());
 		logger.info("Finished process for image at path: {}", fullImagePath);
-		result.setOcr(ocr);
-		
-//		logger.info("Starting process for image at path: {}", fullImagePath);
-//		
-//		if (null == pathToExecutable)
-//		{
-//			throw new RuntimeException("The executable path is not defined, please define the path in the system variable 'HeadstoneIndexerPath'");
-//		}
-//		logger.info("using path to executable: " + pathToExecutable);
-//		try {
-//			Date timerStart = new Date();
-//			logger.info("Calling executable with: " + fullImagePath + "  " + fullPathToOutputImages);
-//			ProcessBuilder pb = new ProcessBuilder(pathToExecutable + "/HeadstoneIndexer", fullImagePath, fullPathToOutputImages);//fullPathToOutputImages);
-//			pb.redirectErrorStream(true);
-//			Process process = pb.start();
-//			BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-//			String s = null;
-//			while ((s = stdInput.readLine()) != null) {
-//				System.out.println(s);
-//			}
-//			logger.info("Output of HeadstoneIndexer:");
-//			
-//			Date timerEnd = new Date();
-//			result.setDuration(timerEnd.getTime() - timerStart.getTime());
-//			logger.info("Finished process for image at path: {}", fullImagePath);
-//		} catch (IOException e) {
-//			logger.error("Error in running the HeadstoneIndexer", e);
-//		}
-		
-		String imageName = imagePath.substring(0, imagePath.lastIndexOf("."));
-		result.setBinarizedNormalPath(relativePathToOutputImages + "/finalartworkRemoval_" + imageName + ".png");
-		result.setBinarizedInvertedPath(relativePathToOutputImages + "/finalartworkRemoval_" + imageName + "-inverse.png");
-		result.setRegionNormalPath(relativePathToOutputImages + "/artworkRemoval-segmentationCCs_" + imageName + ".png");
-		result.setRegionInvertedPath(relativePathToOutputImages + "/artworkRemoval-segmentationCCs_" + imageName + "-inverse.png");
-		result.setZonedImagePath(relativePathToOutputImages + "/textZoning_" + imageName + ".png");
+		result.setOcrResult(ocrResults);
 		
 		return result;
 	}
