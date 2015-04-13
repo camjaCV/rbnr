@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.format.datetime.DateFormatter;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.camjacv.rbnr.adapter.ScanstoneAdapter;
+import com.camjacv.rbnr.adapter.RbnrAdapter;
 import com.camjacv.rbnr.adapter.Settings;
 
 public class HIServiceImpl implements HIService {
@@ -60,7 +60,7 @@ public class HIServiceImpl implements HIService {
 	}
 	
 	@Override
-	public HIResult getBinarizedImage(Settings settings) {
+	public HIResult getBinarizedImage(Settings settings, String[] imagePaths) {
 		String imagePath = settings.getImageFilePath();
 		String relativePathToInputImages = "data/input-images";
 		String fullPathToInputImages = PATH_TO_WEBAPP + "/" + relativePathToInputImages;
@@ -85,7 +85,7 @@ public class HIServiceImpl implements HIService {
 		HIResult result = new HIResult();
 		result.setOriginalPath(relativePathToInputImages + "/" + imagePath);
 		
-		ScanstoneAdapter adapter = new ScanstoneAdapter();
+		RbnrAdapter adapter = new RbnrAdapter();
 		Date timerStart = new Date();
 		String ocr = adapter.indexHeadstone(settings);
 		Date timerEnd = new Date();

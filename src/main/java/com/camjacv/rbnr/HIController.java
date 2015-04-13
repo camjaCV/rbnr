@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.camjacv.rbnr.adapter.ScanstoneAdapter;
+import com.camjacv.rbnr.adapter.RbnrAdapter;
 import com.camjacv.rbnr.adapter.Settings;
 
 @Controller
@@ -46,7 +46,7 @@ public class HIController
 		{
 			return new ResponseEntity<HIResult>(HttpStatus.TOO_MANY_REQUESTS);
 		}
-		ScanstoneAdapter testCall = new ScanstoneAdapter();
+		RbnrAdapter testCall = new RbnrAdapter();
 		
 		//Set up the settings
 		Settings settings = new Settings();
