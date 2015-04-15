@@ -119,7 +119,7 @@ public class HIServiceImpl implements HIService {
 			@Override
 			public boolean accept(File dir, String name) {
 				logger.debug("Checking against dir: " + dir + ", name: " + name);
-				if (name.matches("\\d{3}\\.JPG"))
+				if (name.matches("\\d+\\.(JPG|jpg)"))
 				{
 					return true;
 				}

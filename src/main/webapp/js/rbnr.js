@@ -29,7 +29,7 @@ hiModule.directive('rbnr', ['$http', '$upload', function($http, $upload){
 								'<img id="original" class="originalImage" /></a>' +
 							'</div>' +
 							'<div ng-if="result.processingTime">Processing time: <span ng-bind="result.processingTime" /> seconds</div><br /><br />' +
-							'<div ng-if="result.ocr && hasResult">Transcription: <span ng-bind="result.ocr" /><br /><br /></div>' +
+							'<div ng-if="result.ocrResult && hasResult">Transcription: <span ng-bind="result.ocrResult" /><br /><br /></div>' +
 //							'<div ng-if="result.ABBYYOcr && hasResult">ABBYY Transcription: <span ng-bind="result.ABBYYOcr" /><br /><br /></div>' +
 						'</div>' +
 						'<div>' +
@@ -69,6 +69,7 @@ hiModule.directive('rbnr', ['$http', '$upload', function($http, $upload){
 				$http.post('/rbnr/rest/binarize', scope.result.inputImage).
 			    success(function(result, status, headers, config) {
 			    	scope.result = result;
+
 //			    	scope.result.inputImage = result.originalPath.substr(result.originalPath.lastIndexOf('/') + 1);
 			    	scope.result.processingTime = Math.round((result.duration * 0.001) * 1000) / 1000;
 			    	scope.processing = false;
