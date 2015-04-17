@@ -29,7 +29,15 @@ hiModule.directive('rbnr', ['$http', '$upload', function($http, $upload){
 								'<img id="original" class="originalImage" /></a>' +
 							'</div>' +
 							'<div ng-if="result.processingTime">Processing time: <span ng-bind="result.processingTime" /> seconds</div><br /><br />' +
-							'<div ng-if="result.ocrResult && hasResult">Transcription: <span ng-bind="result.ocrResult" /><br /><br /></div>' +
+							'<div ng-if="result.ocrResult && hasResult">Rbn\'s found: <br />' +
+								'<span style="display:inline-flex" ng-repeat="(key, value) in result.ocrResult">' +
+									'Image {{key}}:' +
+									'<ul style="display:inline-block;">' +
+										'<li style="text-align:left" ng-repeat="transcription in value">{{transcription}}</li>' +
+									'</ul>' +
+								'</span>' +
+							'<br /><br /></div>' +
+
 //							'<div ng-if="result.ABBYYOcr && hasResult">ABBYY Transcription: <span ng-bind="result.ABBYYOcr" /><br /><br /></div>' +
 						'</div>' +
 						'<div>' +
